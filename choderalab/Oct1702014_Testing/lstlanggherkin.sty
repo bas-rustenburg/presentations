@@ -1,0 +1,16 @@
+\usepackage{listings}
+\lstdefinelanguage[cucumber]{Gherkin}
+  {morekeywords={Given,When,Then,And,But,Step,Scenario},
+   otherkeywords={Scenario:,Feature:, Outline:,Examples:,Background:,Scenarios:, | },
+   sensitive=false,
+   morestring={[b]"},
+   morestring=[s]{"""}{"""},
+   morestring=[s]{<}{>},
+   morecomment=[l]\#,
+  }
+
+
+\lstdefinelanguage[behave]{Gherkin}[cucumber]{Gherkin}
+  {
+   deletekeywords={Background:, Scenarios:},
+  }
