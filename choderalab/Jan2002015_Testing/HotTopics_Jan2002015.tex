@@ -1,0 +1,368 @@
+\documentclass[aspectratio=1610,xcolor={usenames,dvipsnames}]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{default}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{lstlanggherkin}
+\usepackage{etoolbox}
+
+\definecolor{basrblue}{RGB}{77, 237, 59}
+\definecolor{basrorange}{RGB}{235, 75, 129}
+
+\usetheme{basr}
+\usecolortheme{basr}
+
+\hypersetup{pdfstartview={Fit}}
+
+\title[Testing] % (optional, only for long titles)
+{Code testing philosophies}
+\subtitle{Examples in python}
+\author[Rustenburg]{Bas ~Rustenburg,~ Chodera Lab @MSKCC}
+\date[JCLAB 2014]{Hot Topics Tuesday ,  January 20 2015}
+\subject{Computer Science}
+
+
+\newtoggle{InString}{}% Keep track of if we are within a string
+\togglefalse{InString}% Assume not initally in string
+
+\newcommand*{\ColorIfNotInString}[1]{\iftoggle{InString}{#1}{\color{basrorange}#1}}%
+\newcommand*{\ProcessQuote}[1]{#1\iftoggle{InString}{\global\togglefalse{InString}}{\global\toggletrue{InString}}}%
+\newcommand{\python}{\lstset{literate=%
+    %{"}{{{\ProcessQuote{"}}}}1% Disable coloring within double quotes
+    %{'}{{{\ProcessQuote{'}}}}1% Disable coloring within single quote
+    {0}{{{\ColorIfNotInString{0}}}}1
+    {1}{{{\ColorIfNotInString{1}}}}1
+    {2}{{{\ColorIfNotInString{2}}}}1
+    {3}{{{\ColorIfNotInString{3}}}}1
+    {4}{{{\ColorIfNotInString{4}}}}1
+    {5}{{{\ColorIfNotInString{5}}}}1
+    {6}{{{\ColorIfNotInString{6}}}}1
+    {7}{{{\ColorIfNotInString{7}}}}1
+    {8}{{{\ColorIfNotInString{8}}}}1
+    {9}{{{\ColorIfNotInString{9}}}}1,
+    language=Python,
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{basrblue}\bfseries,
+    keywordstyle=[2]\color{Aquamarine}\ttfamily,
+    stringstyle=\color{basrorange}\ttfamily,
+    commentstyle=\color{lightgray}\ttfamily,
+    morecomment=[l][\color{magenta}]{\#},
+    morekeywords=[2]{self},
+    showstringspaces=false
+}
+\renewcommand{\ttdefault}{pcr}	
+}
+
+\newcommand{\gherkin}{\lstset{,
+    language=[behave]Gherkin,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{basrblue}\ttfamily,
+    keywordstyle=[2]\color{basrorange}\ttfamily,
+    stringstyle=\color{basrorange}\ttfamily,
+    commentstyle=\color{lightgray}\ttfamily,
+    morekeywords=[2]{thing,other_thing},
+}
+}
+
+\newcommand{\tocframe}{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+\begin{document}
+
+% Title page
+  \begin{frame}
+    \titlepage
+  \end{frame}
+
+% Table of contents 
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[]
+  \end{frame}
+
+% Reasons for testing code
+\section{Why test code?}
+\tocframe
+
+\begin{frame}
+\frametitle{Why do we write tests for code?}
+Writing tests for code can prevent mistakes, and guide development of software.
+\begin{exampleblock}{Common reasons for writing tests}
+  \begin{itemize} 
+    \item Catch bugs introduced during development
+    \item Maintain backwards compatibility
+    \item Verify output of newly implemented function
+    \item Introduction to new developers 
+    \item Provide a scaffold for code design
+  \end{itemize}
+\end{exampleblock}
+\end{frame}
+
+    
+    
+\section{Testing paradigms}
+\subsection{Development-Driven Development}
+\tocframe
+\begin{frame}
+  \frametitle{Development-Driven Development}
+  \framesubtitle{Developing code, write tests later}
+  
+  \begin{block}{Strategy}
+	  ``My objective is to produce code, not write tests. As long as users follow my example, the code should work fine.''
+    \begin{itemize}
+      \item Write the code first
+      \item Make sure it produces the output you expect
+      \item Finally, write tests to maintain the code in further development, if time allows it.
+      
+    \end{itemize}
+
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Development-Driven Development}
+  \framesubtitle{Developing code, write tests later}
+  The idea: ``My objective is to produce code, not write tests.''
+  \begin{block}{Advantages}
+    \begin{itemize}
+      \item Spend your development time of the part of the software that ultimately matters most
+      \item Programmer is not burdened with maintaining strict software management methodologies
+      
+    \end{itemize}
+    
+  \end{block}
+    \begin{block}{Disadvantages}
+    \begin{itemize}
+      \item Lack of code design and structure
+      \item Inexperienced developers introducing bugs	
+      \item Code becomes hard to inherit
+    \end{itemize}
+    
+  \end{block}
+
+\end{frame}
+
+\subsection{Test-Driven Development}
+\tocframe
+% Different testing paradigm TDD
+\begin{frame}
+  \frametitle{Test-Driven Development}
+  \framesubtitle{Developing code starting with tests}
+  \begin{block}{How does it work?}
+	  The emphasis is on the structure of the code.  
+    \begin{itemize}
+      \item Instead of units of code, one first writes tests of the unit
+      \item Then, you write a minimal amount of code to make the test pass
+      \item Finally, verify that all tests succeed.
+      \item Connect all the units and you will have the complete program.
+      
+    \end{itemize}
+
+  \end{block}
+
+\end{frame}
+
+%uses/ advantages of tdd 
+\begin{frame}
+  \frametitle{Test-Driven Development}
+  \framesubtitle{Developing code starting with tests}
+  \begin{block}{What are the advantages?}
+    \begin{itemize}
+      \item Keeps code concise
+      \item Clear purpose for implemented code
+      \item Tests don't cost extra time to write
+      \item \textbf{Y}ou \textbf{A}ren't \textbf{G}onna \textbf{N}eed \textbf{I}t.
+      \begin{itemize}
+        \item No code written besides the essentials
+	\item Code stays simple and modular
+      \end{itemize}
+
+      
+    \end{itemize}
+
+  \end{block}
+
+\end{frame}
+
+\subsection{Behavior-Driven Development}
+\tocframe
+%use bdd
+\begin{frame}
+  \frametitle{Behavior-Driven Development}
+  \framesubtitle{Developing from the end-users perspective.}
+  \begin{block}{What are the key ideas?}
+    \begin{itemize}
+      \item The intended behavior of a program determines the development strategy
+      \item Using domain specific language to describe behavior
+      \begin{itemize}
+        \item Often close to natural language, with some object-oriented elements
+      \end{itemize}
+
+      \item Allow non-experts to design software and tests
+      \item Have programmers implement them
+    \end{itemize}
+
+  \end{block}
+
+  
+\end{frame}
+
+\section{Good testing practices}
+\tocframe
+%Good testing practice
+\begin{frame}
+  \frametitle{Good testing practices}
+  \framesubtitle{Some things to keep in mind when writing tests.}
+  \begin{block}{Attempt to at least:}
+    \begin{itemize}
+      \item  Focus on small units of functionality and ensure correctness
+      \item  Tests must be able to run independently (see Mock for help)
+      \item  Keep them fast! Slowness discourages running tests.
+      \item  Write a test for debugging.
+      \item  Keep your code clear, keep your tests clearer!
+    \end{itemize}
+    \vfill
+      {\tiny Inspired by: The Hitchhiker’s Guide to Python}
+  \end{block}
+
+  {\tiny \url{https://github.com/kennethreitz/python-guide}}
+\end{frame}
+
+% Mock example
+\begin{frame}[fragile]
+  \frametitle{Mock, a useful tool in testing}
+  \framesubtitle{Keeping your tests independent.}
+  \python
+  \lstset{basicstyle=\ttfamily\tiny}
+  \begin{exampleblock}{Mock}
+    Making sure that a method was called:
+    \lstinputlisting{code_examples/mock_example.py}
+  \end{exampleblock}
+  \vfill
+  {\tiny \url{http://www.voidspace.org.uk/python/mock/index.html}}
+\end{frame}
+
+\section{Code examples}
+\subsection{Unit testing}
+\tocframe
+% Unittest
+\begin{frame}[fragile]
+\frametitle{How to test code?}
+\framesubtitle{Example python libraries}
+\python
+\lstset{basicstyle=\ttfamily\tiny}
+\begin{exampleblock}{unittest}
+A solid testing library that provides many functions to help you test units of code.
+\lstinputlisting{code_examples/unittest_example.py}
+\vfill
+{\tiny\url{https://docs.python.org/2/library/unittest.html}}
+\end{exampleblock}
+\end{frame}
+
+% Doctest
+\begin{frame}[fragile]
+\frametitle{How to test code?}
+\framesubtitle{Example python libraries}
+\python
+\lstset{basicstyle=\ttfamily\tiny}
+\begin{exampleblock}{doctest}
+Write test in your documentation strings.
+\lstinputlisting{code_examples/doctest_example.py}
+\vfill
+{\tiny\url{https://docs.python.org/2/library/doctest.html}}
+\end{exampleblock}
+\end{frame}
+
+
+% Nosetests
+\begin{frame}[fragile]
+\frametitle{How to test code?}
+\framesubtitle{Example python libraries}
+\python
+\begin{exampleblock}{nosetests}
+Adds test discovery on top of available tools.
+
+\lstinputlisting{code_examples/test_nose_example.py}
+Try commands such as:
+\begin{itemize}
+  \item nosetests
+  \item nosetests unittest\_example.py
+  \item nosetests {-{}-}with-doctest
+\end{itemize}
+\vfill
+{\tiny \url{https://nose.readthedocs.org/en/latest}}
+
+\end{exampleblock}
+
+
+\end{frame}
+
+\subsection{Cucumber and Behave}
+%cucumber , behave
+\begin{frame}
+  \frametitle{Cucumber and Behave}
+  \framesubtitle{Examples of Behavior-Driven Development tools}
+  \begin{block}{What are they all about?}
+    \begin{itemize}
+      \item Cucumber (Ruby), Behave(Python), Specflow (.NET) et al.
+      \item The behavior of the program is written down in a business readable, domain specific language called \emph{Gherkin}
+      \item This is then parsed and matched to functions called \emph{step functions}
+      \item The step functions are written in actual programming languages
+      \item They test other underlying code and take input from the Gherkin parser
+    \end{itemize}
+  
+  \end{block}
+  \vfill
+  {\tiny\url{https://github.com/cucumber/cucumber/wiki/Gherkin}}
+\end{frame}
+
+%gherkin
+%example
+
+\begin{frame}[fragile]
+\frametitle{Gherkin syntax}
+\gherkin
+\begin{exampleblock}{A simple example}
+\lstinputlisting{code_examples/features/example.feature}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Step methods}
+\framesubtitle{The underlying python code}
+\python
+\lstset{basicstyle=\ttfamily\tiny}
+\begin{exampleblock}{A simple example}
+\lstinputlisting{code_examples/features/steps/example_steps.py}
+\end{exampleblock}
+\end{frame}
+  
+%sources
+\section*{Sources}
+\begin{frame}
+  \frametitle{Useful sources of information}
+  \framesubtitle{..the wiki is not enough..}
+  \begin{alertblock}{Urls}
+    \begin{itemize}
+      \item Hitchhiker's Guide to Python : \url{https://github.com/kennethreitz/python-guide}
+      \item doctest, unittest: \url{https://docs.python.org/2/library/development.html}
+      \item nose:  \url{https://nose.readthedocs.org}
+      \item mock:  \url{http://www.voidspace.org.uk/python/mock/mock.html}
+      \item behave:  \url{http://pythonhosted.org/behave/}
+      \item cucumber: \url{http://cukes.info}
+    \end{itemize}
+
+  \end{alertblock}
+
+\end{frame}
+
+
+\end{document}

@@ -1,0 +1,49 @@
+\mode<presentation>
+
+\setbeamertemplate{background canvas}{
+  \begin{tikzpicture}[remember picture,overlay]
+   \node[opacity=0.7] at (current page.center) {\includegraphics[scale=.5,keepaspectratio]{comic}};
+   \ifnum\thepage>1\relax%
+   \fill[white,opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+   \fi
+  \end{tikzpicture}
+}
+\setbeamertemplate{background}{
+  \begin{tikzpicture}[shift={(current page.center)}]
+  \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);  
+ % \fill[color=white] (0,2) rectangle (\the\paperwidth,\the\paperheight);  
+  \fill[color=basrorange] (0,0) rectangle(2.95,1.9);
+  \fill[color=basrblue] (3.05,0) rectangle(\the\paperwidth,1.9);
+  \ifnum\thepage>1\relax%
+   \fill[white,opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+   \fi
+  \end{tikzpicture}  
+}
+
+
+
+
+% Title page
+\defbeamertemplate*{title page}{basr}[1][]
+{ 
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25cm%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%     
+    \end{beamercolorbox}%
+    \vskip6.5cm%
+    \begin{beamercolorbox}[wd=14cm,leftskip=3cm,#1]{author}
+      \usebeamerfont{author}\insertauthor%
+    \end{beamercolorbox}
+     \vskip0.1cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=3cm,#1]{date}
+      \usebeamerfont{author}\insertdate%
+    \end{beamercolorbox}
+  \vfill
+}
+
+\mode
+<all>
