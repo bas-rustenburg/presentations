@@ -1,7 +1,7 @@
-Presentation on testing in python, October 17 2014
-==================================================
+Hot Topics on testing philosophies, January 20 2015
+===================================================
 
-A presentation given in the Chodera lab on the topic of testing in python.
+A presentation given at CBIO hot topics about code testing philosophies, with some code samples in python.
 
 Instructions
 ------------
